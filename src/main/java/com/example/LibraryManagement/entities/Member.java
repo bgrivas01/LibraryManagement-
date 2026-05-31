@@ -34,9 +34,7 @@ public class Member {
     private LocalDate membershipExpiryDate;
 
     @Enumerated(EnumType.STRING)
-    private MemberStatus status; // ACTIVE, INACTIVE
-
-
+    private MemberStatus memberStatus; // ACTIVE, INACTIVE
 
 
     

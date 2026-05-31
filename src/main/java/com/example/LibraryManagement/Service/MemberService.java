@@ -35,7 +35,11 @@ public class MemberService {
             Member memberToUpdate = optionalMember.get();
             memberToUpdate.setName(memberDetails.getName());
             memberToUpdate.setEmail(memberDetails.getEmail());
-            memberToUpdate.setStatus(memberDetails.getStatus());
+            memberToUpdate.setMemberStatus(memberDetails.getMemberStatus());
+            memberToUpdate.setPhoneNumber(memberDetails.getPhoneNumber());
+            memberToUpdate.setAddress(memberDetails.getAddress());
+            memberToUpdate.setMembershipDate(memberDetails.getMembershipDate());
+            memberToUpdate.setMembershipExpiryDate(memberDetails.getMembershipExpiryDate());
             memberRepository.save(memberToUpdate);
         } else {
             throw new RuntimeException("Member not found with id: " + id);
@@ -54,7 +58,7 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findById(id);
         if(optionalMember.isPresent()){
             Member memberToUpdate = optionalMember.get();
-            memberToUpdate.setStatus(status);
+            memberToUpdate.setMemberStatus(status);
             memberRepository.save(memberToUpdate);
         } else {
             throw new RuntimeException("Member not found with id: " + id);
