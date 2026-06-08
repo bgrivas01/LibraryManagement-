@@ -32,6 +32,7 @@ public class BorrowedRecordsService {
         return borrowedRecordsRepository.findById(id).orElse(null);
     }
 
+
     public void borrowBook(Long bookId, Long memberid){
         Book book = bookService.getBookById(bookId).orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
         Member member = memberService.getMemberById(memberid).orElseThrow(() -> new RuntimeException("Member not found with id: " + memberid));
@@ -67,6 +68,11 @@ public class BorrowedRecordsService {
         borrowedRecordsRepository.save(borrowedRecord);
     }
 
+
+    //gives me the record of a book with a certain id
+    public List<BorrowedRecords> getBorrowedRecordsByBookId(Long bookId){
+        return borrowedRecordsRepository.findByBookId(bookId);
+    }
     
     
 }
