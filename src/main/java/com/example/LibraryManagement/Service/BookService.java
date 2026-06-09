@@ -10,6 +10,7 @@ import com.example.LibraryManagement.entities.Book;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -20,7 +21,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getBookById(Long id){ //we do optional in case we cant find the book
+    public Optional<Book> getBookById(Long id){ 
         return bookRepository.findById(id);
     }
 

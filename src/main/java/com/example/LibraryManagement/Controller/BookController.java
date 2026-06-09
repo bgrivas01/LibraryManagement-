@@ -1,8 +1,8 @@
 package com.example.LibraryManagement.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,28 +26,32 @@ public class BookController {
     private final BookService bookService;
     
     @GetMapping("")
-    public List<Book> getAllBooks(){
-        return bookService.getAllBooks();
+    public ResponseEntity<List<Book>> getAllBooks(){
+        return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
-    public Optional<Book> getBookById(@PathVariable Long id){
-        return bookService.getBookById(id);
+    public ResponseEntity<Book> getBookById(@PathVariable Long id){
+        return bookService.getBookById(id)
+                            .map(book -> ResponseEntity.ok(book)).
+                            orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("")
-    public Book addBook(@RequestBody Book book){
-        return bookService.addBook(book);
+    public ResponseEntity<Book> addBook(@RequestBody Book book){
+        Book saved = bookService.addBook(book);
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book book){
-        return bookService.updateBook(id, book);
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book){
+        return ResponseEntity.ok(bookService.updateBook(id, book));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id){
-        bookService.deleteBook(id); 
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id){
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
     
 
