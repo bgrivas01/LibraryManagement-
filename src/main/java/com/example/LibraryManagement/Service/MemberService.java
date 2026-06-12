@@ -25,11 +25,11 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
-    public void addMember(Member member){
-         memberRepository.save(member);
+    public Member addMember(Member member){
+         return memberRepository.save(member);
     }
 
-    public void updateMember(Long id, Member memberDetails){
+    public Member updateMember(Long id, Member memberDetails){
         Optional<Member> optionalMember = memberRepository.findById(id);
         if(optionalMember.isPresent()){
             Member memberToUpdate = optionalMember.get();
@@ -41,9 +41,11 @@ public class MemberService {
             memberToUpdate.setMembershipDate(memberDetails.getMembershipDate());
             memberToUpdate.setMembershipExpiryDate(memberDetails.getMembershipExpiryDate());
             memberRepository.save(memberToUpdate);
+            return memberToUpdate;
         } else {
             throw new RuntimeException("Member not found with id: " + id);
         }
+        
     }
 
     public void deleteMember(Long id){
@@ -54,15 +56,17 @@ public class MemberService {
         }
     }
 
-    public void changeMemberStatus(Long id, MemberStatus status){
+    public Member changeMemberStatus(Long id, MemberStatus status){
         Optional<Member> optionalMember = memberRepository.findById(id);
         if(optionalMember.isPresent()){
             Member memberToUpdate = optionalMember.get();
             memberToUpdate.setMemberStatus(status);
             memberRepository.save(memberToUpdate);
+            return memberToUpdate;
         } else {
             throw new RuntimeException("Member not found with id: " + id);
         }
+        
     }
 
     

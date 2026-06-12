@@ -1,8 +1,8 @@
 package com.example.LibraryManagement.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,32 +27,36 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("")
-    public List<Member> getAllMemebers(){
-        return memberService.getAllMembers();
+    public ResponseEntity<List<Member>> getAllMemebers(){
+        return ResponseEntity.ok(memberService.getAllMembers());
     }
 
     @GetMapping("/{id}")
-    public Optional<Member> getMemberById(@PathVariable Long id){
-        return memberService.getMemberById(id);
+    public ResponseEntity<Member> getMemberById(@PathVariable Long id){
+        return memberService.getMemberById(id)
+                .map(member -> ResponseEntity.ok(member))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("")
-    public void addMember(@RequestBody Member member){
-        memberService.addMember(member);
+    public ResponseEntity<Member> addMember(@RequestBody Member member){
+        Member saved = memberService.addMember(member);
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
-    public void updateMember(@PathVariable Long id, @RequestBody Member memberDetails){
-        memberService.updateMember(id, memberDetails);
+    public ResponseEntity<Member> updateMember(@PathVariable Long id, @RequestBody Member memberDetails){
+        return ResponseEntity.ok(memberService.updateMember(id, memberDetails));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMember(@PathVariable Long id){
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id){
         memberService.deleteMember(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/changestatus/{id}")
-    public void changeMemberStatus(@PathVariable Long id, @RequestBody MemberStatus status){
-        memberService.changeMemberStatus(id, status);
+    public ResponseEntity<Member> changeMemberStatus(@PathVariable Long id, @RequestBody MemberStatus status){
+        return ResponseEntity.ok(memberService.changeMemberStatus(id, status));
     }
 }
