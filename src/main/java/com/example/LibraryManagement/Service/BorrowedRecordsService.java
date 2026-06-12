@@ -2,6 +2,7 @@ package com.example.LibraryManagement.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,25 +23,22 @@ public class BorrowedRecordsService {
     private final MemberService memberService;
     private final BorrowedRecordsRepository borrowedRecordsRepository;
     
-    //need a way to list out the how Record
-    
     public List<BorrowedRecords> getAllBorrowedRecords(){
         return borrowedRecordsRepository.findAll();
     }
 
-    public BorrowedRecords getBorrowedRecordById(Long id){
-        return borrowedRecordsRepository.findById(id).orElse(null);
+    public Optional<BorrowedRecords> getBorrowedRecordById(Long id){
+        return borrowedRecordsRepository.findById(id);
     }
 
 
-    public void borrowBook(Long bookId, Long memberid){
+    public BorrowedRecords borrowBook(Long bookId, Long memberid){
         Book book = bookService.getBookById(bookId).orElseThrow(() -> new RuntimeException("Book not found with id: " + bookId));
         Member member = memberService.getMemberById(memberid).orElseThrow(() -> new RuntimeException("Member not found with id: " + memberid));
 
         if (book.isAvailable() && member.getMemberStatus() == MemberStatus.ACTIVE){
             book.setAvailable(false);
-            bookService.updateBook(bookId, book)
-            ;
+            bookService.updateBook(bookId, book);
             BorrowedRecords borrowedRecord = new BorrowedRecords();
             borrowedRecord.setBook(book);
             borrowedRecord.setMember(member);
@@ -49,12 +47,13 @@ public class BorrowedRecordsService {
             borrowedRecord.setBorrowedStatus(BorrowStatus.BORROWED);
 
             borrowedRecordsRepository.save(borrowedRecord);
+            return borrowedRecord;
         } else {
             throw new RuntimeException("Book is not available or Member is not active");
         }
     }
         
-    public void returnBook(Long borrowedRecordId){
+    public BorrowedRecords returnBook(Long borrowedRecordId){
         BorrowedRecords borrowedRecord = borrowedRecordsRepository.findById(borrowedRecordId).orElseThrow(() -> new RuntimeException("Borrowed record not found with id: " + borrowedRecordId));
         Book book = borrowedRecord.getBook();
         if (book.isAvailable() || borrowedRecord.getBorrowedStatus() != BorrowStatus.BORROWED) {
@@ -66,6 +65,7 @@ public class BorrowedRecordsService {
         borrowedRecord.setBorrowedStatus(BorrowStatus.RETURNED);
         borrowedRecord.setReturnDate(LocalDate.now());
         borrowedRecordsRepository.save(borrowedRecord);
+        return borrowedRecord;
     }
 
 

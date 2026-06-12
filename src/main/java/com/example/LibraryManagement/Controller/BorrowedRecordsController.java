@@ -2,6 +2,7 @@ package com.example.LibraryManagement.Controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,27 +26,30 @@ public class BorrowedRecordsController {
     private final BorrowedRecordsService borrowedRecordsService;
 
     @GetMapping
-    public List<BorrowedRecords> getBorrowedRecords() {
-        return borrowedRecordsService.getAllBorrowedRecords();
+    public ResponseEntity<List<BorrowedRecords>> getBorrowedRecords() {
+        return ResponseEntity.ok(borrowedRecordsService.getAllBorrowedRecords());
     }
 
     @GetMapping("/{id}")
-    public BorrowedRecords getBorrowedRecordById(@PathVariable Long id) {
-        return borrowedRecordsService.getBorrowedRecordById(id);
+    public ResponseEntity<BorrowedRecords> getBorrowedRecordById(@PathVariable Long id) {
+        return borrowedRecordsService.getBorrowedRecordById(id)
+                .map(borrowedRecord -> ResponseEntity.ok(borrowedRecord))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/borrow")
-    public void borrowBook(@RequestBody BorrowRequest request) {
-        borrowedRecordsService.borrowBook(request.getBookId(), request.getMemberId());
+    public ResponseEntity<BorrowedRecords> borrowBook(@RequestBody BorrowRequest request) {
+        BorrowedRecords saved = borrowedRecordsService.borrowBook(request.getBookId(), request.getMemberId());
+        return ResponseEntity.status(201).body(saved);
     }
     
     @PutMapping("/return/{id}")
-    public void returnBook(@PathVariable Long id) {
-        borrowedRecordsService.returnBook(id);
+    public ResponseEntity<BorrowedRecords> returnBook(@PathVariable Long id) {
+        return ResponseEntity.ok(borrowedRecordsService.returnBook(id));
     }
 
     @GetMapping("/book/{bookId}")
-    public List<BorrowedRecords> getBorrowedRecordsByBookId(@PathVariable Long bookId) {
-        return borrowedRecordsService.getBorrowedRecordsByBookId(bookId);
+    public ResponseEntity<List<BorrowedRecords>> getBorrowedRecordsByBookId(@PathVariable Long bookId) {
+        return ResponseEntity.ok(borrowedRecordsService.getBorrowedRecordsByBookId(bookId));
     }
 }
